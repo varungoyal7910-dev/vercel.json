@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bhraava Di Hatti</title>
+    <style>
+        :root {
+            --primary-green: #25d366;
+            --dark-bg: #1a1a1a;
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background:#f4f7f6; color: #333; }
+        
+        header {
+            background: black;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 26px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        .card:hover { transform: scale(1.02); }
+
+        .card img { 
+            width: 100%; 
+            height: 300px; 
+            object-fit: contain; 
+            border-radius: 10px; 
+            background: #fff;
+        }
+
+        .card h3 { margin: 15px 0 5px; font-size: 1.1rem; color: #444; }
+        .card p { color: #d32f2f; font-size: 1.4rem; font-weight: bold; margin: 10px 0; }
+
+        .buy-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Modal / Form */
+        #formBox {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.4);
+            z-index: 1000;
+            width: 85%;
+            max-width: 350px;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .pay-btn { 
+            background: #000; 
+            color: white; 
+            width: 100%; 
+            padding: 15px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<header>🛍️ Bhraava Di Hatti</header>
+
+<div class="container">
+    <!-- Product: Love Balloons -->
+    <div class="card">
+        <!-- Bhai, yahan apni image ka link daal dena -->
+        <img src="https://i.postimg.cc/mD3qPz9m/love-balloons.jpg" alt="Love Heart Balloons">
+        <h3>Love Heart Balloon Set (12 Pcs)</h3>
+        <p>₹100</p>
+        <button class="buy-btn" onclick="openForm('Love Heart Balloon Set', 100)">Buy Now</button>
+    </div>
+
+    <!-- Product: Stylish Suit -->
+    <div class="card">
+        <img src="https://via.placeholder.com/300x400?text=Stylish+Suit" alt="Suit">
+        <h3>Stylish Suit</h3>
+        <p>₹599</p>
+        <button class="buy-btn" onclick="openForm('Stylish Suit', 599)">Buy Now</button>
+    </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeForm()"></div>
+
+<div class="form-box" id="formBox">
+    <h3 style="margin-top:0; text-align: center;">Delivery Details</h3>
+    <input type="text" id="custName" placeholder="Apna Naam Likhein">
+    <input type="tel" id="custPhone" placeholder="Mobile Number">
+    <input type="text" id="custAddress" placeholder="Poora Address (Pincode ke sath)">
+    <button class="pay-btn" onclick="startPayment()">Pay Now & Order</button>
+</div>
+
+<script>
+    let selectedProduct = "";
+    let selectedPrice = 0;
+
+    function openForm(name, price) {
+        selectedProduct = name;
+        selectedPrice = price;
+        document.getElementById("formBox").style.display = "block";
+        document.getElementById("overlay").style.display = "block";
+    }
+
+    function closeForm() {
+        document.getElementById("formBox").style.display = "none";
+        document.getElementById("overlay").style.display = "none";
+    }
+
+    function startPayment() {
+        const name = document.getElementById("custName").value;
+        const phone = document.getElementById("custPhone").value;
+        const address = document.getElementById("custAddress").value;
+
+        if(!name || !phone || !address) {
+            alert("Bhai, saari details bharna zaroori hai!");
+            return;
+        }
+
+        // UPI Config
+        const upiId = "varun.goyal@ptyes"; 
+        const merchantName = "Varun Goyal";
+        const transactionNote = `Order:${selectedProduct}`;
+
+        // Create UPI URL
+        const upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(merchantName)}&am=${selectedPrice}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+
+        // WhatsApp Config
+        const myWhatsApp = "919417124082";
+        const message = `*Naya Order Aaya Hai!*%0A%0A*Item:* ${selectedProduct}%0A*Price:* ₹${selectedPrice}%0A%0A*Customer:* ${name}%0A*Phone:* ${phone}%0A*Address:* ${address}`;
+        const waUrl = `https://wa.me/${myWhatsApp}?text=${message}`;
+
+        // 1. UPI App Open Karega
+        window.location.href = upiUrl;
+
+        // 2. 4 second baad WhatsApp par le jayega detail bhejane ke liye
+        setTimeout(() => {
+            window.open(waUrl, "_blank");
+        }, 4000);
+    }
+</script>
+
+</body>
+</html>
